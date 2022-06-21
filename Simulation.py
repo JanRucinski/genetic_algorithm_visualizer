@@ -227,8 +227,6 @@ class main(Frame):
         self.root.update()
         self.iteration_counter += 1
         pass
-# todo:
-# help
 
     def draw_osobniki_scrollbar(self, frame):
         size = self.size_of_osobnik
@@ -459,5 +457,3 @@ if __name__ == '__main__':
     root = tk.Tk()
     app = main(master=root)
     pass
-
-# main()

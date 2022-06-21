@@ -1,0 +1,8 @@
+223,53,228| difference: 225
+223,53,228| difference: 225
+63,53,228| difference: 65
+63,53,230| difference: 63
+63,53,230| difference: 63
+63,53,230| difference: 63
+31,53,230| difference: 31
+31,53,230| difference: 31

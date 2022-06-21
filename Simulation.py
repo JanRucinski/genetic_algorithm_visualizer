@@ -30,6 +30,7 @@ def scroll_y(*args):
 
 class main(Frame):
 
+
     def __init__(self, master = None):
         self.root = master
         self.root.title("genetic algorithm ilustrator")
@@ -56,30 +57,50 @@ class main(Frame):
         self.pad_after_table = 0
         self.control_panel_width = 200
         self.control_panel_height = 200
-        self.flag_for_warunkowy_start = False
-        self.flag_warunek_first = True
-        self.warunek = IntVar()
-        self.warunek.set(0)
+        self.flag_for_conditional_start = False
+        self.flag_conditional_first = True
+        self.condition = IntVar()
+        self.condition.set(0)
 
         self.run()
         pass
 
+
+    def stop_button_command(self):
+        self.running = False
+        self.start_button['state'] = 'normal'
+
+        self.stop_button['state'] = 'disabled'
+        self.reset_button['state'] = 'normal'
+
+        self.specimen_handler.write_history_of_found_to_file('./history_of_best.txt')
+        pass
+
+    
     def run(self):
         counter = self.iteration_counter
         
         self.draw_master_frame()
 
         while(counter<1000):
-            if(self.running and self.flag_for_warunkowy_start and counter > self.warunek.get() and self.flag_warunek_first):
+            try:
+                self.condition.get()
+            except:
+                self.setStatusBar("błędna ilości iteracji", 3000)
+                self.condition.set(0)
+
+            if(self.running and self.flag_for_conditional_start and counter > self.condition.get() 
+                    and self.flag_conditional_first):
                 self.stop_button_command()
-                self.flag_warunek_first = False
-            if(self.close):
+                self.flag_conditional_first = False
+            elif(self.close):
                 break
-            if(self.running):
+            elif(self.running):
                 self.iterate()
                 time.sleep(0.1)
                 counter+=1
-            self.root.update()
+            else:
+                self.root.update()
         pass
 
     def draw_master_frame(self):
@@ -113,10 +134,10 @@ class main(Frame):
 
     def start_button_command(self):
 
-        if (self.warunek.get() > 0):
-            self.flag_for_warunkowy_start = True
+        if (self.condition.get() > 0):
+            self.flag_for_conditional_start = True
         else:
-            self.flag_for_warunkowy_start = False
+            self.flag_for_conditional_start = False
 
         if(not self.is_initialized):
             self.initialize()
@@ -128,15 +149,6 @@ class main(Frame):
             self.spin_box['state'] = 'disabled'
         pass
 
-    def stop_button_command(self):
-        self.running = False
-        self.start_button['state'] = 'normal'
-
-        self.stop_button['state'] = 'disabled'
-        self.reset_button['state'] = 'normal'
-
-        self.specimen_handler.write_history_of_found_to_file('history_of_best.txt')
-        pass
 
     def reset_button_command(self):
         self.iteration_counter = 0
@@ -147,8 +159,8 @@ class main(Frame):
         self.found_first = False
         self.spin_box['state'] = 'normal'
         self.running = False
-        self.flag_for_warunkowy_start = False
-        self.flag_warunek_first = True
+        self.flag_for_conditional_start = False
+        self.flag_conditional_first = True
         self.root.update()
 
         self.run()
@@ -186,7 +198,7 @@ class main(Frame):
 
         #create self.warunek_box
         self.warunek_box = ttk.Spinbox(control_frame, values=(10, 20, 30, 40, 50),
-            textvariable=self.warunek, wrap=True)
+            textvariable=self.condition, wrap=True)
         warunek_box = self.warunek_box
         warunek_box.pack()
 
@@ -195,11 +207,14 @@ class main(Frame):
 
     def initialize(self): #modified
         target = self.target
-        population_size = self.population_size.get()
+        try:
+            population_size = self.population_size.get()
+        except:
+            self.setStatusBar('podano błędną wartość populacji', 2000)
 
         if(population_size < 2):
             print("za mała populacja")
-            self.setStatusBar("za mała populacja")
+            self.setStatusBar("za mała populacja", 2000)
         else:
             self.specimen_handler = SpecimenHandler(target, population_size= population_size)
             self.is_initialized = True
@@ -369,7 +384,7 @@ class main(Frame):
         canvas.pack(side=LEFT,expand=True,fill=BOTH)
         pass
 
-    
+
    
     def draw_osobniki_start_scrollbar(self, frame):
         size = self.size_of_osobnik
@@ -444,9 +459,9 @@ class main(Frame):
         self.statusbar.pack(side=BOTTOM)
         pass
     
-    def setStatusBar(self, txt):
+    def setStatusBar(self, txt, time = 1000):
         self.statusbar["text"] = txt
-        self.statusbar.after(1000, self.clearStatusBar)
+        self.statusbar.after(time, self.clearStatusBar)
         
     def clearStatusBar(self):
         self.statusbar["text"] = ""

@@ -60,6 +60,15 @@ class SpecimenHandler:
         return self.population_size
 
     def write_history_of_found_to_file(self, filename):
-        with open(filename, "w") as file:
-            for line in self.get_best_specimen().get_history():
-                file.write(line + "\n")
+        try:
+            open(filename, 'x')
+        except:
+            pass
+        
+        try:
+            with open(filename, "w") as file:
+                for line in self.get_best_specimen().get_history():
+                    file.write(line + "\n")
+            file.close()
+        except:
+            print("Error while writing to file")

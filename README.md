@@ -9,3 +9,5 @@ file Simulation is responsible for creating a GUI and working on a SpecimenHandl
 
 
 the repository contains both an .app and an .exe file to support UNIX and Windows systems
+
+~~the typo in name of the repo has to stay for now ~~
